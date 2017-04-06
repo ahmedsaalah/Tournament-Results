@@ -78,7 +78,7 @@ def playerStandings():
         wins: the number of matches the player has won
         matches: the number of matches the player has played
     """
-    return makeQuery("SELECT * FROM players ORDER BY wins DESC",1)
+    return makeQuery("SELECT * FROM standings ORDER BY wins DESC",1)
 
 def reportMatch(winner, loser):
     """Records the outcome of a single match between two players.
@@ -93,22 +93,16 @@ def reportMatch(winner, loser):
 
 
 
-    try :
-        conn = connect()
-        c = conn.cursor()
-        # add match to table
-        c.execute("INSERT INTO matches VALUES (%s, %s)", (winner, loser))
-        # winner gains a victory and adds to match total
-        c.execute("""UPDATE players SET wins = wins + 1, matches = matches + 1
-            WHERE pID = %s""", (winner,))
-        # loser only adds to match total
-        c.execute("""UPDATE players SET matches = matches + 1
-            WHERE pID = %s""", (loser,))
-        conn.commit()
-        conn.close()
-    except psycopg2.Error as e:
-        print e
-    
+
+    conn = connect()
+    c = conn.cursor()
+    # add match to table
+    c.execute("INSERT INTO matches (winner, loser) VALUES (%s,%s)", (winner, loser))
+    # winner gains a victory and adds to match total
+
+    conn.commit()
+    conn.close()
+
     
 
     
@@ -140,6 +134,38 @@ def swissPairings():
     return pairs
         # for i in range(len(players)-1):
         #      print [[i], a[i+1]]
+
+
+
+if __name__ == '__main__':
+
+    # print(countPlayers())
+
+    # deleteMatches()
+    # deletePlayers()
+
+    # registerPlayer("ahmed")
+    # # print(countPlayers())
+    # registerPlayer("maahmed")
+    # print(countPlayers())
+
+    #print(reportMatch(2,1))
+    # print(swissPairings())
+    #print(makeQuery("Select * from matches ",1))
+    print ("--------------------")
+    print(playerStandings())
+    # print(countPlayers())
+
+    # print(countPlayers())
+
+    print(reportMatch(1,2))
+    print(reportMatch(1,2))
+    print(reportMatch(1,2))
+    print(reportMatch(1,2))
+    print(swissPairings())
+    # print(makeQuery("Select * from matches ",1))
+    print ("--------------------")
+    print(playerStandings())
 
 
 

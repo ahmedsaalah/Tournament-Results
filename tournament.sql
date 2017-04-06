@@ -18,9 +18,8 @@ CREATE DATABASE tournament;
 CREATE TABLE IF NOT EXISTS players
 (
 pID serial primary key ,
-name varchar(50) ,
-wins int DEFAULT 0,
-matches int DEFAULT 0
+name varchar(50) 
+
 
 
 );
@@ -30,6 +29,15 @@ CREATE TABLE  IF NOT EXISTS matches
 (
 matchID serial primary key,
 
-winner int  REFERENCES players(pID) ON DELETE CASCADE,,
-loser int   REFERENCES players(pID) ON DELETE CASCADE,
+winner int  REFERENCES players(pID) ON DELETE CASCADE,
+loser int   REFERENCES players(pID) ON DELETE CASCADE
 );
+
+-- Standing views
+CREATE OR REPLACE VIEW standings AS
+SELECT players.pID, players.name,
+	SUM( CASE WHEN matches.winner = players.pID THEN 1 ELSE 0 END ) AS wins,
+	count(matches.*) AS matches
+FROM players LEFT JOIN matches
+ON players.pID = matches.winner OR players.pID = matches.loser
+GROUP BY players.pID;
